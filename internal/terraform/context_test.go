@@ -114,7 +114,7 @@ func TestNewContextRequiredVersion(t *testing.T) {
 				t.Fatalf("unexpected NewContext errors: %s", diags.Err())
 			}
 
-			diags = c.Validate(mod)
+			diags = c.Validate(mod, DefaultValidateOpts)
 			if diags.HasErrors() != tc.Err {
 				t.Fatalf("err: %s", diags.Err())
 			}
@@ -287,7 +287,7 @@ Please run "terraform init".`,
 				t.Fatalf("unexpected NewContext error: %s", diags.Err())
 			}
 
-			diags = c.Validate(m)
+			diags = c.Validate(m, DefaultValidateOpts)
 			if tc.WantErr != "" {
 				if len(diags) == 0 {
 					t.Fatal("expected diags but none returned")
