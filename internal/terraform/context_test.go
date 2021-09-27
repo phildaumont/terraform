@@ -994,6 +994,24 @@ func assertNoErrors(t *testing.T, diags tfdiags.Diagnostics) {
 	t.FailNow()
 }
 
+// assertDiagnosticsMatch fails the test in progress (using t.Fatal) if the
+// two sets of diagnostics don't match after being normalized using the
+// "ForRPC" processing step, which eliminates the specific type information
+// and HCL expression information of each diagnostic.
+//
+// assertDiagnosticsMatch sorts the two sets of diagnostics in the usual way
+// before comparing them, though diagnostics only have a partial order so that
+// will not totally normalize the ordering of all diagnostics sets.
+func assertDiagnosticsMatch(t *testing.T, got, want tfdiags.Diagnostics) {
+	got = got.ForRPC()
+	want = want.ForRPC()
+	got.Sort()
+	want.Sort()
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Fatalf("wrong diagnostics\n%s", diff)
+	}
+}
+
 // logDiagnostics is a test helper that logs the given diagnostics to to the
 // given testing.T using t.Log, in a way that is hopefully useful in debugging
 // a test. It does not generate any errors or fail the test. See
